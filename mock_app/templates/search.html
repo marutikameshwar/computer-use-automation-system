@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Legacy Bank - Member Search</title>
+    <style>
+        body { font-family: monospace; background-color: #f0f0f0; padding: 20px; }
+        .container { border: 2px solid #333; padding: 15px; background-color: white; width: 400px; }
+        .error { color: red; font-weight: bold; margin-bottom: 10px; border: 1px solid red; padding: 5px;}
+        /* Intentionally messy, no clear IDs for inputs to test the AI */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Member Lookup Terminal</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/search_action" method="POST">
+            <table>
+                <tr>
+                    <td>Member Identifier:</td>
+                    <td><input type="text" name="member_id" placeholder="Enter ID..."></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br>
+                        <button type="submit" class="btn-primary">Search Database</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

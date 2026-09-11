@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction Confirmation</title>
+    <style>
+        body { font-family: monospace; background-color: #f0f0f0; padding: 20px; }
+        .container { border: 2px solid green; padding: 15px; background-color: #eaffea; width: 400px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 id="success-header">Transaction Successful</h2>
+        <p>Successfully processed <strong>${{ amount }}</strong> for {{ account_type }} account.</p>
+        <p>Member ID: {{ member_id }}</p>
+        
+        <br>
+        <a href="/dashboard/{{ member_id }}">Return to Dashboard</a>
+    </div>
+</body>
+</html>

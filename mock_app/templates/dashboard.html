@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Member Dashboard</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            border: 2px solid #333;
+            padding: 15px;
+            background-color: white;
+            width: 600px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .nav {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    {% if member_id == '54321' %}
+    <!-- Recoverable Condition: Unexpected Interstitial Modal -->
+    <div id="compliance-modal" style="display: block; position: fixed; top: 20%; left: 20%; background: #fff3cd; border: 2px solid #856404; padding: 20px; z-index: 1000; width: 300px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5);">
+        <h3 style="color: #856404; margin-top: 0;">⚠️ Mandatory Notice</h3>
+        <p>Please acknowledge the updated terms of service before accessing customer records.</p>
+        <button onclick="document.getElementById('compliance-modal').style.display='none'" style="background: #856404; color: white; padding: 5px 10px; border: none; cursor: pointer;">Acknowledge & Close</button>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="nav">
+            <a href="/">← Back to Search</a>
+        </div>
+
+        <h2>Dashboard - {{ member.name }} (ID: {{ member_id }})</h2>
+
+        <h3>Accounts</h3>
+        <!-- Nested table to represent legacy structures -->
+        <table aria-label="Account Balances">
+            <tr>
+                <th>Account Type</th>
+                <th>Balance</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>Savings</td>
+                <td>{{ member.savings }}</td>
+                <td><a href="/transaction/{{ member_id }}?type=savings">Transact</a></td>
+            </tr>
+            <tr>
+                <td>Checking</td>
+                <td>{{ member.checking }}</td>
+                <td><a href="/transaction/{{ member_id }}?type=checking">Transact</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>
