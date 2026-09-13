@@ -97,9 +97,9 @@ def run_replay(member_id: str):
     # Load the engine
     engine = ReplayEngine(artifact_path, capability_dir=CAPABILITY_DIR)
     
-    # Parameterize: inject member_id into the first "type" step
+    # Parameterize: replace the training value '12345' with the dynamic member_id
     for step in engine.artifact.steps:
-        if step.action == "type" and step.locator and step.locator.strategy == "placeholder":
+        if step.action == "type" and step.value == "12345":
             step.value = member_id
             break
     

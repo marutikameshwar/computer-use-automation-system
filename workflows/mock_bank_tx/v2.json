@@ -1,7 +1,7 @@
 {
   "version": 2,
   "derived_from": 1,
-  "intervention_id": "INT-20260913163701",
+  "intervention_id": "INT-20260913170340",
   "name": "Mock Bank Transaction",
   "description": "Search for member 12345, navigate to their dashboard, initiate a savings transaction of 500, reach the confirmation page, extract the full text of the paragraph that starts with 'Successfully processed' into a variable named 'transaction_receipt', and then immediately output an action of wait with a value of DONE.",
   "inputs": [
@@ -13,11 +13,11 @@
     {
       "action": "type",
       "locator": {
-        "strategy": "placeholder",
-        "value": "Enter ID...",
-        "name": null
+        "strategy": "role",
+        "value": "textbox",
+        "name": "Enter ID..."
       },
-      "value": "999",
+      "value": "500",
       "extract_as": null
     },
     {
@@ -33,9 +33,9 @@
     {
       "action": "click",
       "locator": {
-        "strategy": "role",
-        "value": "link",
-        "name": "Transact"
+        "strategy": "text",
+        "value": "Transact",
+        "name": null
       },
       "value": null,
       "extract_as": null
@@ -78,11 +78,11 @@
   },
   "expected_outcomes": [
     {
-      "name": "record_not_found",
-      "severity": "business_outcome",
+      "name": "server_error",
+      "severity": "hard_failure",
       "locator": {
         "strategy": "text",
-        "value": "Record not found",
+        "value": "500 Internal Server Error",
         "name": null
       }
     }
