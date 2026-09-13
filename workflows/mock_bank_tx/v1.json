@@ -13,9 +13,9 @@
     {
       "action": "type",
       "locator": {
-        "strategy": "role",
-        "value": "textbox",
-        "name": "Enter ID..."
+        "strategy": "placeholder",
+        "value": "Enter ID...",
+        "name": null
       },
       "value": "12345",
       "extract_as": null

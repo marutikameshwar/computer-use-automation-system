@@ -97,9 +97,11 @@ def run_replay(member_id: str):
     # Load the engine
     engine = ReplayEngine(artifact_path, capability_dir=CAPABILITY_DIR)
     
-    # Parameterize: replace the training value '12345' with the dynamic member_id
+    # Parameterize: replace the very first 'type' step's value with the dynamic member_id
+    # We do this blindly because the training value (e.g., 12345) might have been overwritten 
+    # during a previous escalation if the artifact was saved after being parameterized!
     for step in engine.artifact.steps:
-        if step.action == "type" and step.value == "12345":
+        if step.action == "type":
             step.value = member_id
             break
     

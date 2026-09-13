@@ -1,7 +1,7 @@
 {
   "version": 2,
   "derived_from": 1,
-  "intervention_id": "INT-20260913170340",
+  "intervention_id": "INT-20260913171300",
   "name": "Mock Bank Transaction",
   "description": "Search for member 12345, navigate to their dashboard, initiate a savings transaction of 500, reach the confirmation page, extract the full text of the paragraph that starts with 'Successfully processed' into a variable named 'transaction_receipt', and then immediately output an action of wait with a value of DONE.",
   "inputs": [
@@ -13,9 +13,9 @@
     {
       "action": "type",
       "locator": {
-        "strategy": "role",
-        "value": "textbox",
-        "name": "Enter ID..."
+        "strategy": "placeholder",
+        "value": "Enter ID...",
+        "name": null
       },
       "value": "500",
       "extract_as": null
@@ -78,7 +78,7 @@
   },
   "expected_outcomes": [
     {
-      "name": "server_error",
+      "name": "server_crash",
       "severity": "hard_failure",
       "locator": {
         "strategy": "text",
