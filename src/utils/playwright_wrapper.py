@@ -73,9 +73,16 @@ class PlaywrightController:
             val_lower = str(locator_value).lower() if locator_value else ""
             
             if any(keyword in name_lower or keyword in val_lower for keyword in risky_keywords):
-                print(f"\n[Guardrail] RISKY ACTION DETECTED: You are about to click '{locator_name or locator_value}'.")
-                input("[Guardrail] Press Enter to approve and continue...")
-                print("[Guardrail] Action approved. Proceeding...")
+                # First check if the element actually exists before prompting
+                try:
+                    is_visible = element.first.is_visible(timeout=2000)
+                except Exception:
+                    is_visible = False
+                    
+                if is_visible:
+                    print(f"\n[Guardrail] RISKY ACTION DETECTED: You are about to click '{locator_name or locator_value}'.")
+                    input("[Guardrail] Press Enter to approve and continue...")
+                    print("[Guardrail] Action approved. Proceeding...")
             # -------------------------------------
             element.first.click()
         elif action == "type":

@@ -1,14 +1,14 @@
 {
-  "version": "1.0",
+  "version": 2,
+  "derived_from": 1,
+  "intervention_id": "INT-20260913163701",
   "name": "Mock Bank Transaction",
-  "description": "Search for member 12345, navigate to their dashboard, initiate a savings transaction of 500, reach the confirmation page, and extract the full text of the paragraph that starts with 'Successfully processed' into a variable named 'transaction_receipt'.",
+  "description": "Search for member 12345, navigate to their dashboard, initiate a savings transaction of 500, reach the confirmation page, extract the full text of the paragraph that starts with 'Successfully processed' into a variable named 'transaction_receipt', and then immediately output an action of wait with a value of DONE.",
   "inputs": [
     "member_id",
     "amount"
   ],
-  "outputs": [
-    "transaction_receipt"
-  ],
+  "outputs": [],
   "steps": [
     {
       "action": "type",
@@ -17,7 +17,7 @@
         "value": "Enter ID...",
         "name": null
       },
-      "value": "12345",
+      "value": "999",
       "extract_as": null
     },
     {
@@ -79,9 +79,10 @@
   "expected_outcomes": [
     {
       "name": "record_not_found",
+      "severity": "business_outcome",
       "locator": {
         "strategy": "text",
-        "value": "No active accounts found",
+        "value": "Record not found",
         "name": null
       }
     }

@@ -72,7 +72,12 @@ class DiscoveryAgent:
             # 1. OBSERVE
             tree = self.controller.get_accessibility_tree()
             
-            prompt = f"Current Accessibility Tree:\n{tree}\n\nWhat is the next action?"
+            # Inject memory so Claude knows what it already did
+            history = "None yet." if not steps_taken else json.dumps(
+                [s.model_dump(exclude_none=True) for s in steps_taken], indent=2
+            )
+            
+            prompt = f"Current Accessibility Tree:\n{tree}\n\nSteps you have already completed:\n{history}\n\nWhat is the single next action? If you have already extracted the data requested in the goal, your next action MUST be wait with value DONE."
             
             # 2. DECIDE
             print("[Discovery Agent] Asking Claude for the next move...")
@@ -142,6 +147,55 @@ class DiscoveryAgent:
         
         print(f"\n[Discovery Agent] Run finished. Recorded {len(steps_taken)} steps.")
         return steps_taken
+
+class ClassificationAgent:
+    def __init__(self):
+        self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+    def classify_error(self, accessibility_tree: str) -> dict:
+        """
+        Analyzes the screen to classify an unknown error.
+        Returns a dictionary with 'name', 'severity', and 'recognizer_text'.
+        """
+        prompt = f"""
+        The automated agent was trying to complete a task, but an error occurred on the page.
+        Here is the accessibility tree of the current page:
+        {accessibility_tree}
+        
+        Identify the prominent error message or state change on the screen.
+        Provide a short machine-readable name for it (e.g., 'record_not_found', 'server_error').
+        Determine if it's a 'business_outcome' (a legitimate application response like 'no results') 
+        or a 'hard_failure' (a system crash like 500 internal server error).
+        Provide the exact text on the screen that we can use as a locator to recognize this state in the future.
+        
+        Return ONLY a JSON object in this format:
+        {{
+            "name": "string",
+            "severity": "business_outcome" or "hard_failure",
+            "recognizer_text": "exact string from the tree"
+        }}
+        """
+        response = self.client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        # Parse the JSON response
+        json_str = ""
+        for block in response.content:
+            if getattr(block, "type", "") == "text":
+                json_str = block.text.strip()
+                break
+        if not json_str and hasattr(response.content[0], "text"):
+            json_str = response.content[0].text.strip()
+            
+        if "```json" in json_str:
+            json_str = json_str.split("```json")[1].split("```")[0].strip()
+        elif "```" in json_str:
+            json_str = json_str.split("```")[1].split("```")[0].strip()
+            
+        return json.loads(json_str)
 
 # A quick block to run it directly from the terminal for testing
 if __name__ == "__main__":

@@ -46,6 +46,9 @@ class ExpectedBusinessOutcome(BaseModel):
     name: str = Field(
         description="A machine-readable name for the outcome (e.g., 'record_not_found')."
     )
+    severity: Literal["business_outcome", "hard_failure"] = Field(
+        description="'business_outcome' is handled automatically. 'hard_failure' always escalates to human."
+    )
     locator: Locator = Field(
         description="The specific UI element that confirms this business outcome occurred."
     )
@@ -55,7 +58,9 @@ class CapabilityArtifact(BaseModel):
     The strict contract between the Discovery Agent and the Replay Engine.
     This is the JSON file saved to disk after a successful discovery run.
     """
-    version: str = Field(default="1.0", description="Schema version.")
+    version: int = Field(default=1, description="Artifact version number (monotonically increasing integer).")
+    derived_from: Optional[int] = Field(default=None, description="The version this artifact was derived from.")
+    intervention_id: Optional[str] = Field(default=None, description="The intervention that triggered this version.")
     name: str = Field(description="A descriptive name for this capability.")
     description: str = Field(description="A natural language description of what this automation does.")
     
