@@ -8,7 +8,8 @@ app.secret_key = 'super_secret_key' # Required for flash messages
 MEMBERS = {
     "12345": {"name": "Alice Smith", "savings": "$12,450.00", "checking": "$1,200.50"},
     "54321": {"name": "Bob Jones", "savings": "$5,000.00", "checking": "$450.25"},
-    "777": {"name": "Charlie Handoff", "savings": "$1,000.00", "checking": "$10.00"}
+    "777": {"name": "Charlie Handoff", "savings": "$1,000.00", "checking": "$10.00"},
+    "500": {"name": "System Crash Tester", "savings": "$0.00", "checking": "$0.00"}
 }
 
 @app.route('/')
@@ -21,7 +22,14 @@ def search_action():
     
     # Hard Stop Simulation: 500 crashes the legacy system completely
     if member_id == "500":
-        return "<h1>500 Internal Server Error</h1><p>FATAL EXCEPTION: The legacy mainframe crashed.</p>", 500
+        error_html = """
+        <h1>500 Internal Server Error</h1>
+        <p>FATAL EXCEPTION: The legacy mainframe crashed.</p>
+        <hr>
+        <p style='color: green;'><i>Admin Tools:</i></p>
+        <a href='/dashboard/500'><button>Resolve System Error (Admin Bypass)</button></a>
+        """
+        return error_html, 500
         
     # Deterministic Business Error: 999 always fails (graceful)
     if member_id == "999" or member_id not in MEMBERS:

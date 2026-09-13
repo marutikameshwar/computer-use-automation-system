@@ -29,7 +29,9 @@ class ReplayEngine:
         self.controller.goto(start_url)
         extracted_data = {}
         
-        for idx, step in enumerate(self.artifact.steps):
+        idx = 0
+        while idx < len(self.artifact.steps):
+            step = self.artifact.steps[idx]
             print(f"--- Executing Step {idx+1}: {step.action} ---")
             
             loc_strat = step.locator.strategy if step.locator else None
@@ -50,6 +52,9 @@ class ReplayEngine:
                     
                 # Small sleep to let the page react
                 time.sleep(0.5)
+                
+                # Advance to next step if successful
+                idx += 1
                 
             except Exception as e:
                 print(f"\n[ERROR] Step {idx+1} failed: {e}")
@@ -90,12 +95,12 @@ class ReplayEngine:
                                 }
                             else:
                                 # The human fixed it and pressed Enter! We want to resume.
-                                print("[Replay Engine] Operator resolved the issue. Resuming execution...")
+                                print("[Replay Engine] Operator resolved the issue. Retrying the failed step...")
                                 handled = True
                                 break # break the outcome checking loop
                 
                 if handled:
-                    continue # continue to the next step in the ReplayEngine loop
+                    continue # continue loops back to the while condition without incrementing idx, so it retries!
                 
                 # 2. Nothing matched → Truly unknown state → Classify + Write new version
                 print(f"\n[Replay Engine] Checking expected_outcomes... {len(self.artifact.expected_outcomes)} outcomes registered. No match.")
