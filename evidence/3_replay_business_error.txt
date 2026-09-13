@@ -1,0 +1,20 @@
+==================================================
+      COMPUTER-USE AUTOMATION ORCHESTRATOR      
+==================================================
+
+[*] Blueprint 'workflows/mock_bank_tx.json' found!
+[*] Bypassing LLM. Routing directly to Deterministic Replay Engine...
+
+
+[Replay Engine] Starting execution of 'Mock Bank Transaction'
+[Controller] Navigating to http://localhost:5000
+--- Executing Step 1: type ---
+[Controller] Executing: type on role='textbox' (name='None') with value='[REDACTED]'
+--- Executing Step 2: click ---
+[Controller] Executing: click on role='button' (name='Search Database') with value='None'
+--- Executing Step 3: click ---
+[Controller] Executing: click on role='link' (name='Transact') with value='None'
+
+[ERROR] Step 3 failed: Playwright could not find locator role='link' name='Transact' after 3.0s.
+[Replay Engine] Expected Business Outcome reached: 'record_not_found'
+[Replay Engine] Exiting gracefully.

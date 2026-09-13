@@ -65,6 +65,11 @@ This document outlines the step-by-step plan to build the backend integration la
 - [ ] Implement a domain Allowlist (e.g., strictly `http://localhost:*`). Throw an error if the agent attempts to navigate elsewhere.
 - [ ] Add a redaction utility: When dumping logs or saving the artifact, ensure any sensitive inputs (like a simulated SSN or password) are replaced with `[REDACTED]` in the output logs.
 
+## Phase 7.5: Final Polish & Gap Analysis
+*Goal: Ensure 100% compliance with the rubric's minor details.*
+- [ ] Implement a Risky Action guardrail: Flag actions (like "Submit" or "Transact") and require the user to explicitly press `Enter` to approve before executing.
+- [ ] Implement Output Returning: Modify the Replay Engine to collect any scraped data (`extract_as`) into a dictionary and return it to the terminal/API at the end of the run.
+
 ## Phase 8: Deliverables & Documentation
 *Goal: Package the submission exactly as requested.*
 - [ ] Run a clean discovery run and save the logs/artifact to the `/evidence/` folder.

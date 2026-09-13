@@ -13,6 +13,10 @@ class PlaywrightController:
         self.page = self.browser.new_page()
 
     def goto(self, url: str):
+        # Domain Allowlist Check (Phase 7)
+        if not url.startswith("http://localhost:5000"):
+            raise PermissionError(f"Navigation to unauthorized domain blocked by Allowlist: {url}")
+            
         print(f"[Controller] Navigating to {url}")
         self.page.goto(url)
         self.page.wait_for_load_state('networkidle')
@@ -25,11 +29,22 @@ class PlaywrightController:
         """
         return self.page.aria_snapshot()
 
+    def redact_sensitive_data(self, text: str) -> str:
+        """
+        Redacts standard alphanumeric inputs to prevent PII leakage in logs.
+        """
+        if not text:
+            return text
+        # If it's a number, SSN, or standard input text, we redact it.
+        # In a real app we might use regex to detect SSNs, but here we redact all typing to be safe.
+        return "[REDACTED]"
+        
     def execute_action(self, action: str, locator_strategy: str, locator_value: str, locator_name: str = None, input_value: str = None):
         """
         Executes an action passed down from the AI's Step model.
         """
-        print(f"[Controller] Executing: {action} on {locator_strategy}='{locator_value}' (name='{locator_name}')")
+        display_value = self.redact_sensitive_data(input_value) if action == "type" else input_value
+        print(f"[Controller] Executing: {action} on {locator_strategy}='{locator_value}' (name='{locator_name}') with value='{display_value}'")
         
         # 1. Resolve the element based on the locator
         if not locator_value:
@@ -51,6 +66,17 @@ class PlaywrightController:
 
         # 2. Execute the requested action
         if action == "click":
+            # --- Guardrail: Risky Action Check ---
+            risky_keywords = ["submit", "transfer", "delete", "pay", "transact"]
+            # Check if locator_name or locator_value contains a risky keyword (case-insensitive)
+            name_lower = str(locator_name).lower() if locator_name else ""
+            val_lower = str(locator_value).lower() if locator_value else ""
+            
+            if any(keyword in name_lower or keyword in val_lower for keyword in risky_keywords):
+                print(f"\n[Guardrail] RISKY ACTION DETECTED: You are about to click '{locator_name or locator_value}'.")
+                input("[Guardrail] Press Enter to approve and continue...")
+                print("[Guardrail] Action approved. Proceeding...")
+            # -------------------------------------
             element.first.click()
         elif action == "type":
             element.first.fill(input_value)
@@ -63,6 +89,29 @@ class PlaywrightController:
         
         # Wait for any network requests to finish before letting the AI observe again
         self.page.wait_for_load_state('networkidle')
+
+    def take_screenshot(self, filepath: str):
+        self.page.screenshot(path=filepath)
+        
+    def check_element_exists(self, strategy: str, value: str, name: str = None) -> bool:
+        """
+        Non-blocking check to see if an element exists on the screen.
+        Used for checking Expected Business Outcomes.
+        """
+        try:
+            if strategy == "role":
+                if name:
+                    return self.page.get_by_role(value, name=name).is_visible(timeout=500)
+                return self.page.get_by_role(value).is_visible(timeout=500)
+            elif strategy == "text" or strategy == "exact_text":
+                return self.page.get_by_text(value, exact=(strategy=="exact_text")).is_visible(timeout=500)
+            elif strategy == "label":
+                return self.page.get_by_label(value).is_visible(timeout=500)
+            elif strategy == "placeholder":
+                return self.page.get_by_placeholder(value).is_visible(timeout=500)
+            return False
+        except Exception:
+            return False
 
     def close(self):
         self.browser.close()

@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 from anthropic import Anthropic
 from pydantic import ValidationError
 
-from src.agent.controller import PlaywrightController
-from src.schema.models import Step, CapabilityArtifact, Locator
+from src.utils.playwright_wrapper import PlaywrightController
+from src.schema.schema import Step, CapabilityArtifact, Locator
 
 load_dotenv()
 
@@ -152,4 +152,24 @@ if __name__ == "__main__":
     
     print("\n--- FINAL RECORDED STEPS FOR ARTIFACT ---")
     for s in recorded_steps:
-        print(s.model_dump_json(indent=2))
+        # Redact the output log for safety
+        dump_s = s.model_copy()
+        if dump_s.action == "type":
+            dump_s.value = "[REDACTED]"
+        print(dump_s.model_dump_json(indent=2))
+        
+    # Phase 4 Completion: Actually save the artifact to disk!
+    from src.schema.models import CapabilityArtifact, Locator
+    
+    artifact = CapabilityArtifact(
+        name="Mock Bank Transaction",
+        description=test_goal,
+        inputs=["member_id", "amount"],
+        steps=recorded_steps,
+        success_condition=Locator(strategy="text", value="DONE")
+    )
+    
+    with open("artifact.json", "w") as f:
+        f.write(artifact.model_dump_json(indent=2))
+    
+    print("\n[Discovery Agent] Successfully saved artifact.json to disk! Ready for Phase 5.")

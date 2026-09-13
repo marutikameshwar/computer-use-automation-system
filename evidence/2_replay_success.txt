@@ -1,0 +1,49 @@
+﻿==================================================
+      COMPUTER-USE AUTOMATION ORCHESTRATOR      
+==================================================
+
+[*] Blueprint 'workflows/mock_bank_tx.json' found!
+[*] Bypassing LLM. Routing directly to Deterministic Replay Engine...
+
+
+[Replay Engine] Starting execution of 'Mock Bank Transaction'
+[Controller] Navigating to http://localhost:5000
+--- Executing Step 1: type ---
+[Controller] Executing: type on placeholder='Enter ID...' (name='None') with value='[REDACTED]'
+--- Executing Step 2: click ---
+[Controller] Executing: click on role='button' (name='Search Database') with value='None'
+--- Executing Step 3: click ---
+[Controller] Executing: click on role='link' (name='Transact') with value='None'
+
+[Guardrail] RISKY ACTION DETECTED: You are about to click 'Transact'.
+[Guardrail] Action approved. Proceeding...
+--- Executing Step 4: type ---
+[Controller] Executing: type on role='spinbutton' (name='None') with value='[REDACTED]'
+--- Executing Step 5: click ---
+[Controller] Executing: click on role='button' (name='Submit Transaction') with value='None'
+
+[Guardrail] RISKY ACTION DETECTED: You are about to click 'Submit Transaction'.
+[Guardrail] Action approved. Proceeding...
+--- Executing Step 6: read_text ---
+[Controller] Executing: read_text on role='paragraph' (name='None') with value='None'
+[Replay Engine] Extracted 'transaction_receipt': Successfully processed $500 for savings account.
+--- Executing Step 7: read_text ---
+[Controller] Executing: read_text on role='paragraph' (name='None') with value='None'
+[Replay Engine] Extracted 'transaction_receipt': Successfully processed $500 for savings account.
+--- Executing Step 8: read_text ---
+[Controller] Executing: read_text on role='paragraph' (name='None') with value='None'
+[Replay Engine] Extracted 'transaction_receipt': Successfully processed $500 for savings account.
+--- Executing Step 9: read_text ---
+[Controller] Executing: read_text on text='Successfully processed' (name='None') with value='None'
+[Replay Engine] Extracted 'transaction_receipt': Successfully processed $500 for savings account.
+--- Executing Step 10: read_text ---
+[Controller] Executing: read_text on role='paragraph' (name='None') with value='None'
+[Replay Engine] Extracted 'transaction_receipt': Successfully processed $500 for savings account.
+--- Verifying Success Condition ---
+[Controller] Executing: wait on text='DONE' (name='None') with value='None'
+[Replay Engine] Warning: Success condition not found exactly as written: Unsupported action: wait
+
+[Replay Engine] Execution completed successfully in record time!
+[Replay Engine] Returned Outputs: {
+  "transaction_receipt": "Successfully processed $500 for savings account."
+}
