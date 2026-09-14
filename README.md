@@ -97,9 +97,10 @@ When you run `python main.py` for the very first time, the system notices that i
 1. It automatically wakes up the **Discovery Agent** (powered by Claude).
 2. It automatically uses the built-in default goal prompt:
    > *"Search for member 12345, navigate to their dashboard, initiate a savings transaction of 500, reach the confirmation page, extract the full text of the paragraph that starts with 'Successfully processed' into a variable named 'transaction_receipt', and then immediately output an action of wait with a value of DONE."*
-3. Claude navigates the UI, clicks Transact, enters $500, and extracts the receipt.
-4. *Safety Guardrail:* The terminal will pause and prompt you to approve a "risky action" before submitting the transaction. **Press Enter to approve.**
-5. **The Result:** The LLM successfully learns the workflow. A deterministic execution blueprint is generated and permanently saved to `src/workflows/mock_bank_tx/v1.json`.
+  3. Claude navigates the UI, fills in the fields, and prepares to click the "Transact" button.
+  4. 🛑 **Critical Safety Guardrail:** Before the AI can click any button related to money or submission (like "Transact"), the wrapper intercepts the action. The terminal will pause and prompt you: `[Guardrail] RISKY ACTION DETECTED: You are about to click 'Transact'. Press Enter to approve...`
+  5. **Press Enter to approve** the critical action.
+  6. **The Result:** The LLM successfully completes the workflow. A deterministic execution blueprint is generated and permanently saved to `src/workflows/mock_bank_tx/v1.json`.
 
 ### ⚡ Run 2 & Beyond: Deterministic Replay & Edge Cases
 Once the blueprint is saved, **every subsequent run completely bypasses the LLM.** 
@@ -116,7 +117,9 @@ From here, you can seamlessly enter different numbers to test various edge case 
   2. The mock bank returns a "Record not found" error on the screen.
   3. The Replay Engine times out looking for the Transact button. It realizes the UI is stuck, so it escalates the failure to the **Classification Agent**.
   4. The Classification Agent analyzes the screen and categorizes this as a legitimate business error (a known application state), *not* a system bug.
-- **The Result:** The system deep-copies the blueprint into `v2.json`, officially cataloging `record_not_found` as an expected `business_outcome`. 
+  5. **Human Approval Prompt:** The terminal will pause and ask you to confirm this diagnosis: `Accept this AI classification? (y/n)`. 
+  6. Type **y** and press **Enter**.
+- **The Result:** Only after your approval, the system deep-copies the blueprint into `v2.json`, officially cataloging `record_not_found` as an expected `business_outcome`. 
 - **Input (Second attempt):** Type `999` again.
 - **What happens:** The system instantly matches the UI state to the `record_not_found` outcome in `v2.json` and gracefully exits *without* calling the LLM!
 
@@ -126,14 +129,16 @@ From here, you can seamlessly enter different numbers to test various edge case 
   1. A new, unexpected "Terms of Service" popup blocks the dashboard.
   2. The engine times out trying to click "Transact" because the popup is in the way. It escalates to the AI.
   3. The Classification Agent identifies this as a `recoverable_condition` and instructs the engine to click "Acknowledge & Close".
-- **The Result:** The engine clicks the popup away, seamlessly resumes the original automation, and successfully completes the transaction!
+  4. **Human Approval Prompt:** The terminal asks: `Accept this AI classification? (y/n)`. Type **y** and press **Enter**.
+- **The Result:** The engine clicks the popup away, seamlessly resumes the original automation, hits the **Transact** button (prompting you for safety permission if configured), and successfully completes the transaction!
 
 #### 🔴 Scenario C: Hard System Failure & Human Handoff (Input: `500`)
 - **Input (First attempt):** Type `500` and press Enter.
 - **What happens:** 
   1. The app throws a simulated 500 Server Crash page.
   2. The engine escalates to the AI, which correctly identifies this as a catastrophic `hard_failure` (System Crash). 
-  3. The system generates `v3.json`, logging this as a known critical failure.
+  3. **Human Approval Prompt:** The terminal asks: `Accept this AI classification? (y/n)`. Type **y** and press **Enter**.
+  4. The system generates `v3.json`, logging this as a known critical failure.
 - **Input (Second attempt):** Without restarting the script, type `500` at the prompt again. 
 - **What happens:** 
   1. The engine hits the crash, but this time recognizes it immediately as a *known hard failure* from `v3.json`. 
