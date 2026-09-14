@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "derived_from": 1,
+  "intervention_id": "INT-20260914160157",
+  "name": "Mock Bank Transaction",
+  "description": "Search for member 12345, navigate to their dashboard, initiate a savings transaction of 500, reach the confirmation page, extract the full text of the paragraph that starts with 'Successfully processed' into a variable named 'transaction_receipt', and then immediately output an action of wait with a value of DONE.",
+  "inputs": [
+    "member_id",
+    "amount"
+  ],
+  "outputs": [],
+  "steps": [
+    {
+      "action": "type",
+      "locator": {
+        "strategy": "role",
+        "value": "textbox",
+        "name": "Enter ID..."
+      },
+      "value": "{{member_id}}",
+      "extract_as": null
+    },
+    {
+      "action": "click",
+      "locator": {
+        "strategy": "role",
+        "value": "button",
+        "name": "Search Database"
+      },
+      "value": null,
+      "extract_as": null
+    },
+    {
+      "action": "click",
+      "locator": {
+        "strategy": "role",
+        "value": "link",
+        "name": "Transact"
+      },
+      "value": null,
+      "extract_as": null
+    },
+    {
+      "action": "type",
+      "locator": {
+        "strategy": "role",
+        "value": "spinbutton",
+        "name": null
+      },
+      "value": "{{amount}}",
+      "extract_as": null
+    },
+    {
+      "action": "click",
+      "locator": {
+        "strategy": "role",
+        "value": "button",
+        "name": "Submit Transaction"
+      },
+      "value": null,
+      "extract_as": null
+    },
+    {
+      "action": "read_text",
+      "locator": {
+        "strategy": "text",
+        "value": "Successfully processed",
+        "name": null
+      },
+      "value": null,
+      "extract_as": "transaction_receipt"
+    },
+    {
+      "action": "wait",
+      "locator": null,
+      "value": "DONE",
+      "extract_as": null
+    }
+  ],
+  "success_condition": {
+    "strategy": "text",
+    "value": "Successfully processed",
+    "name": null
+  },
+  "expected_outcomes": [
+    {
+      "name": "record_not_found",
+      "severity": "business_outcome",
+      "locator": {
+        "strategy": "text",
+        "value": "Record not found",
+        "name": null
+      },
+      "recovery_action": null
+    }
+  ]
+}

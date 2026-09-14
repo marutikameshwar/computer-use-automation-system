@@ -38,12 +38,13 @@
 </head>
 
 <body>
-    {% if member_id == '54321' %}
+    {% if member_id == '888' %}
     <!-- Recoverable Condition: Unexpected Interstitial Modal -->
+    <div id="backdrop" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 999;"></div>
     <div id="compliance-modal" style="display: block; position: fixed; top: 20%; left: 20%; background: #fff3cd; border: 2px solid #856404; padding: 20px; z-index: 1000; width: 300px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5);">
-        <h3 style="color: #856404; margin-top: 0;">⚠️ Mandatory Notice</h3>
+        <h3 style="color: #856404; margin-top: 0;">Mandatory Notice</h3>
         <p>Please acknowledge the updated terms of service before accessing customer records.</p>
-        <button onclick="document.getElementById('compliance-modal').style.display='none'" style="background: #856404; color: white; padding: 5px 10px; border: none; cursor: pointer;">Acknowledge & Close</button>
+        <button onclick="document.getElementById('compliance-modal').style.display='none'; document.getElementById('backdrop').style.display='none';" style="background: #856404; color: white; padding: 5px 10px; border: none; cursor: pointer;">Acknowledge & Close</button>
     </div>
     {% endif %}
 

@@ -1,0 +1,49 @@
+2026-09-14 17:18:55,132 | INFO     | root                 | Initialized root logger. File output: src\logs\replay_run_20260914_171855.log
+2026-09-14 17:18:55,132 | INFO     | __main__             | ==================================================
+2026-09-14 17:18:55,133 | INFO     | __main__             |       COMPUTER-USE AUTOMATION ORCHESTRATOR      
+2026-09-14 17:18:55,133 | INFO     | __main__             | ==================================================
+2026-09-14 17:18:55,133 | INFO     | __main__             | Loading capability 'mock_bank_tx' (version 2)
+2026-09-14 17:18:55,133 | INFO     | __main__             | Bypassing LLM. Routing to Deterministic Replay Engine...
+2026-09-14 17:18:56,125 | INFO     | src.replay.executor  | Starting execution of 'Mock Bank Transaction' (version 2)
+2026-09-14 17:18:56,129 | INFO     | src.utils.playwright_wrapper | Navigating to http://localhost:5000
+2026-09-14 17:18:57,002 | INFO     | src.replay.executor  | --- Executing Step 1: type ---
+2026-09-14 17:18:57,003 | INFO     | src.utils.playwright_wrapper | Executing: type on role='textbox' (name='Enter ID...') with value='[REDACTED]'
+2026-09-14 17:18:57,569 | INFO     | src.replay.executor  | --- Executing Step 2: click ---
+2026-09-14 17:18:57,569 | INFO     | src.utils.playwright_wrapper | Executing: click on role='button' (name='Search Database') with value='None'
+2026-09-14 17:18:58,676 | INFO     | src.replay.executor  | --- Executing Step 3: click ---
+2026-09-14 17:18:58,676 | INFO     | src.utils.playwright_wrapper | Executing: click on role='link' (name='Transact') with value='None'
+2026-09-14 17:19:28,712 | ERROR    | src.utils.playwright_wrapper | !!! Exception in function: execute_action - Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 17:19:28,712 | ERROR    | src.replay.executor  | Step 3 failed: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 17:19:28,716 | ERROR    | src.replay.executor  | Checking expected_outcomes... 1 outcomes registered. No match.
+2026-09-14 17:19:28,795 | INFO     | src.replay.executor  | Screenshot saved to src/evidence/replay_failure_mock_bank_transaction_step_3_20260914_171928.png
+2026-09-14 17:19:28,795 | WARNING  | src.replay.executor  | ================ UNKNOWN STATE DETECTED ================
+2026-09-14 17:19:28,795 | WARNING  | src.replay.executor  | Capability: Mock Bank Transaction
+2026-09-14 17:19:28,796 | WARNING  | src.replay.executor  | Step 3 failed: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 17:19:28,796 | INFO     | src.replay.executor  | Asking AI to analyze the screen for errors...
+2026-09-14 17:19:29,630 | INFO     | httpx2               | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-09-14 17:19:29,677 | INFO     | src.replay.executor  | --- AI Suggestion ---
+2026-09-14 17:19:29,677 | INFO     | src.replay.executor  | Name: internal_server_error
+2026-09-14 17:19:29,677 | INFO     | src.replay.executor  | Severity: hard_failure
+2026-09-14 17:19:29,678 | INFO     | src.replay.executor  | Recognizer Text: '500 Internal Server Error'
+2026-09-14 17:19:29,678 | INFO     | src.replay.executor  | ---------------------
+2026-09-14 17:19:38,422 | WARNING  | src.replay.executor  | ==========================================================
+2026-09-14 17:19:38,424 | INFO     | src.replay.executor  | Deep-copying v2 -> v3
+2026-09-14 17:19:38,424 | INFO     | src.replay.executor  | Adding outcome: internal_server_error (hard_failure)
+2026-09-14 17:19:38,424 | INFO     | src.replay.executor  | Saved: workflows\mock_bank_tx\v3.json (derived_from: 2, intervention: INT-20260914171938)
+2026-09-14 17:19:38,425 | INFO     | src.replay.executor  | Pointer updated: current.txt -> 3
+2026-09-14 17:19:38,591 | INFO     | __main__             | STRUCTURED RESULT:
+{
+  "status": "escalated",
+  "step": 3,
+  "error": "Locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for get_by_role(\"link\", name=\"Transact\").first\n",
+  "outputs": {}
+}

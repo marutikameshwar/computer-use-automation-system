@@ -1,0 +1,60 @@
+# Computer-Use Automation System Configuration
+# Section 3.4: Safety & Policy Guardrails
+
+safety:
+  # Explicit allowlist of domains the agent is permitted to navigate to.
+  # If the AI attempts to visit an unauthorized domain, a PermissionError will be thrown.
+  allowed_domains:
+    - "http://localhost:5000"
+
+  # Explicit allowlist of action types the AI is permitted to use.
+  # This prevents the AI from attempting unauthorized OS-level actions or unknown commands.
+  allowed_actions:
+    - "click"
+    - "type"
+    - "navigate"
+    - "read_text"
+    - "check"
+    - "wait"
+
+  # Keywords that identify a "risky" or "irreversible" action.
+  # If a button or link contains any of these words, the system will pause and require
+  # explicit human confirmation via the CLI before executing the action.
+  risky_keywords:
+    - "submit"
+    - "transfer"
+    - "delete"
+    - "pay"
+    - "transact"
+
+# ----------------------------------------------------
+# Execution & Tuning Settings
+# ----------------------------------------------------
+tuning:
+  # Maximum times the engine will attempt to recover/retry a single step before aborting
+  max_retries: 3
+  
+  # Seconds to sleep between successful steps to allow the UI to react
+  step_delay_seconds: 0.5
+  
+  # Seconds to sleep after executing an autonomous recovery action
+  recovery_delay_seconds: 1.0
+  
+  # Timeout in milliseconds when checking for Expected Business Outcomes
+  outcome_check_timeout_ms: 500
+  
+  # Timeout in milliseconds when checking if an element is visible for Risky Action prompt
+  risky_action_check_timeout_ms: 2000
+
+# ----------------------------------------------------
+# AI Agent Allowances & Models
+# ----------------------------------------------------
+ai_settings:
+  # The Anthropic model to use for Discovery and Classification
+  model_name: "claude-haiku-4-5-20251001"
+  
+  # The absolute maximum number of steps the AI can take before giving up
+  max_discovery_steps: 10
+  
+  # Max tokens to generate
+  max_tokens: 1000

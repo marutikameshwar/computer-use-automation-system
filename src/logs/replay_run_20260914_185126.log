@@ -1,0 +1,88 @@
+2026-09-14 18:51:26,655 | INFO     | root                 | Initialized root logger. File output: src\logs\replay_run_20260914_185126.log
+2026-09-14 18:51:30,233 | INFO     | __main__             | ==================================================
+2026-09-14 18:51:30,234 | INFO     | __main__             |       STARTING REPLAY FOR MEMBER: 500     
+2026-09-14 18:51:30,234 | INFO     | __main__             | ==================================================
+2026-09-14 18:51:30,234 | INFO     | src.orchestrator.orchestrator | Loading capability 'mock_bank_tx' (version 3)
+2026-09-14 18:51:30,234 | INFO     | src.orchestrator.orchestrator | Bypassing LLM. Routing to Deterministic Replay Engine...
+2026-09-14 18:51:31,090 | INFO     | src.replay.engine    | Starting execution of 'Mock Bank Transaction' (version 3)
+2026-09-14 18:51:31,092 | INFO     | src.browser.playwright_wrapper | Navigating to http://localhost:5000
+2026-09-14 18:51:31,945 | INFO     | src.replay.engine    | --- Executing Step 1: type ---
+2026-09-14 18:51:31,945 | INFO     | src.browser.playwright_wrapper | Executing: type on role='textbox' (name='Enter ID...') with value='[REDACTED]'
+2026-09-14 18:51:32,501 | INFO     | src.replay.engine    | --- Executing Step 2: click ---
+2026-09-14 18:51:32,501 | INFO     | src.browser.playwright_wrapper | Executing: click on role='button' (name='Search Database') with value='None'
+2026-09-14 18:51:33,600 | INFO     | src.replay.engine    | --- Executing Step 3: click ---
+2026-09-14 18:51:33,600 | INFO     | src.browser.playwright_wrapper | Executing: click on role='link' (name='Transact') with value='None'
+2026-09-14 18:52:03,634 | ERROR    | src.browser.playwright_wrapper | !!! Exception in function: execute_action - Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 18:52:03,635 | ERROR    | src.replay.engine    | Step 3 failed: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 18:52:03,642 | ERROR    | src.replay.engine    | Known hard failure: 'internal_server_error'
+2026-09-14 18:52:03,710 | INFO     | src.replay.engine    | Screenshot saved to src\evidence\replay_failure_mock_bank_transaction_step_3_20260914_185203.png
+2026-09-14 18:52:03,711 | WARNING  | src.replay.engine    | ================ KNOWN HARD FAILURE ================
+2026-09-14 18:52:03,711 | WARNING  | src.replay.engine    | Capability: Mock Bank Transaction
+2026-09-14 18:52:03,711 | WARNING  | src.replay.engine    | Step Index: 3
+2026-09-14 18:52:03,711 | WARNING  | src.replay.engine    | Error: internal_server_error (hard_failure)
+2026-09-14 18:52:03,712 | WARNING  | src.replay.engine    | This is a known system failure. Human intervention required.
+2026-09-14 18:52:03,712 | WARNING  | src.replay.engine    | The browser is still open. Please fix the state of the application.
+2026-09-14 18:52:03,712 | WARNING  | src.replay.engine    | =======================================================
+2026-09-14 18:52:35,004 | INFO     | src.replay.engine    | [Operator Log] Human intervention performed: issue
+2026-09-14 18:52:35,004 | INFO     | src.replay.engine    | Operator resolved the issue. Retrying the failed step...
+2026-09-14 18:52:35,004 | INFO     | src.replay.engine    | --- Executing Step 3: click ---
+2026-09-14 18:52:35,004 | INFO     | src.browser.playwright_wrapper | Executing: click on role='link' (name='Transact') with value='None'
+2026-09-14 18:52:35,027 | WARNING  | src.browser.playwright_wrapper | RISKY ACTION DETECTED: You are about to click 'Transact'.
+2026-09-14 18:52:38,125 | INFO     | src.browser.playwright_wrapper | Action approved. Proceeding...
+2026-09-14 18:52:39,206 | INFO     | src.replay.engine    | --- Executing Step 4: type ---
+2026-09-14 18:52:39,206 | INFO     | src.browser.playwright_wrapper | Executing: type on role='spinbutton' (name='None') with value='[REDACTED]'
+2026-09-14 18:52:39,736 | INFO     | src.replay.engine    | --- Executing Step 5: click ---
+2026-09-14 18:52:39,736 | INFO     | src.browser.playwright_wrapper | Executing: click on role='button' (name='Submit Transaction') with value='None'
+2026-09-14 18:52:39,745 | WARNING  | src.browser.playwright_wrapper | RISKY ACTION DETECTED: You are about to click 'Submit Transaction'.
+2026-09-14 18:52:40,674 | INFO     | src.browser.playwright_wrapper | Action approved. Proceeding...
+2026-09-14 18:52:42,057 | INFO     | src.replay.engine    | --- Executing Step 6: read_text ---
+2026-09-14 18:52:42,057 | INFO     | src.browser.playwright_wrapper | Executing: read_text on text='Successfully processed' (name='None') with value='None'
+2026-09-14 18:52:42,077 | INFO     | src.replay.engine    | Extracted 'transaction_receipt': [REDACTED SENSITIVE DATA]
+2026-09-14 18:52:42,585 | INFO     | src.replay.engine    | --- Executing Step 7: wait ---
+2026-09-14 18:52:42,585 | INFO     | src.browser.playwright_wrapper | Executing: wait on None='None' (name='None') with value='DONE'
+2026-09-14 18:52:43,100 | INFO     | src.replay.engine    | Result: SUCCESS
+2026-09-14 18:52:43,100 | INFO     | src.replay.engine    | Outputs: [REDACTED SENSITIVE DATA]
+2026-09-14 18:52:43,356 | INFO     | src.orchestrator.orchestrator | STRUCTURED RESULT:
+{
+  "status": "success",
+  "outputs": {
+    "transaction_receipt": "Successfully processed $500 for savings account."
+  }
+}
+2026-09-14 18:52:48,324 | INFO     | __main__             | ==================================================
+2026-09-14 18:52:48,325 | INFO     | __main__             |       STARTING REPLAY FOR MEMBER: 999     
+2026-09-14 18:52:48,325 | INFO     | __main__             | ==================================================
+2026-09-14 18:52:48,325 | INFO     | src.orchestrator.orchestrator | Loading capability 'mock_bank_tx' (version 3)
+2026-09-14 18:52:48,325 | INFO     | src.orchestrator.orchestrator | Bypassing LLM. Routing to Deterministic Replay Engine...
+2026-09-14 18:52:49,163 | INFO     | src.replay.engine    | Starting execution of 'Mock Bank Transaction' (version 3)
+2026-09-14 18:52:49,172 | INFO     | src.browser.playwright_wrapper | Navigating to http://localhost:5000
+2026-09-14 18:52:50,034 | INFO     | src.replay.engine    | --- Executing Step 1: type ---
+2026-09-14 18:52:50,034 | INFO     | src.browser.playwright_wrapper | Executing: type on role='textbox' (name='Enter ID...') with value='[REDACTED]'
+2026-09-14 18:52:50,581 | INFO     | src.replay.engine    | --- Executing Step 2: click ---
+2026-09-14 18:52:50,581 | INFO     | src.browser.playwright_wrapper | Executing: click on role='button' (name='Search Database') with value='None'
+2026-09-14 18:52:51,655 | INFO     | src.replay.engine    | --- Executing Step 3: click ---
+2026-09-14 18:52:51,655 | INFO     | src.browser.playwright_wrapper | Executing: click on role='link' (name='Transact') with value='None'
+2026-09-14 18:53:21,678 | ERROR    | src.browser.playwright_wrapper | !!! Exception in function: execute_action - Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 18:53:21,679 | ERROR    | src.replay.engine    | Step 3 failed: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 18:53:21,683 | INFO     | src.replay.engine    | Known business outcome: 'record_not_found'
+2026-09-14 18:53:21,683 | INFO     | src.replay.engine    | No human intervention needed. Exiting gracefully.
+2026-09-14 18:53:21,872 | INFO     | src.replay.engine    | Screenshot saved to src\evidence\replay_failure_mock_bank_transaction_step_3_20260914_185321.png
+2026-09-14 18:53:22,061 | INFO     | src.orchestrator.orchestrator | STRUCTURED RESULT:
+{
+  "status": "business_outcome",
+  "outcome": "record_not_found",
+  "step": 3,
+  "outputs": {}
+}

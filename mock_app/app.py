@@ -9,7 +9,8 @@ MEMBERS = {
     "12345": {"name": "Alice Smith", "savings": "$12,450.00", "checking": "$1,200.50"},
     "54321": {"name": "Bob Jones", "savings": "$5,000.00", "checking": "$450.25"},
     "777": {"name": "Charlie Handoff", "savings": "$1,000.00", "checking": "$10.00"},
-    "500": {"name": "System Crash Tester", "savings": "$0.00", "checking": "$0.00"}
+    "500": {"name": "System Crash Tester", "savings": "$0.00", "checking": "$0.00"},
+    "888": {"name": "Popup Tester", "savings": "$888.00", "checking": "$88.00"}
 }
 
 @app.route('/')

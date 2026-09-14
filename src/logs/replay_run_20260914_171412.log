@@ -1,0 +1,32 @@
+2026-09-14 17:14:12,111 | INFO     | root                 | Initialized root logger. File output: src\logs\replay_run_20260914_171412.log
+2026-09-14 17:14:12,111 | INFO     | __main__             | ==================================================
+2026-09-14 17:14:12,112 | INFO     | __main__             |       COMPUTER-USE AUTOMATION ORCHESTRATOR      
+2026-09-14 17:14:12,112 | INFO     | __main__             | ==================================================
+2026-09-14 17:14:12,112 | INFO     | __main__             | Loading capability 'mock_bank_tx' (version 2)
+2026-09-14 17:14:12,112 | INFO     | __main__             | Bypassing LLM. Routing to Deterministic Replay Engine...
+2026-09-14 17:14:13,268 | INFO     | src.replay.executor  | Starting execution of 'Mock Bank Transaction' (version 2)
+2026-09-14 17:14:13,270 | INFO     | src.utils.playwright_wrapper | Navigating to http://localhost:5000
+2026-09-14 17:14:14,134 | INFO     | src.replay.executor  | --- Executing Step 1: type ---
+2026-09-14 17:14:14,135 | INFO     | src.utils.playwright_wrapper | Executing: type on role='textbox' (name='Enter ID...') with value='[REDACTED]'
+2026-09-14 17:14:14,691 | INFO     | src.replay.executor  | --- Executing Step 2: click ---
+2026-09-14 17:14:14,691 | INFO     | src.utils.playwright_wrapper | Executing: click on role='button' (name='Search Database') with value='None'
+2026-09-14 17:14:15,771 | INFO     | src.replay.executor  | --- Executing Step 3: click ---
+2026-09-14 17:14:15,771 | INFO     | src.utils.playwright_wrapper | Executing: click on role='link' (name='Transact') with value='None'
+2026-09-14 17:14:45,802 | ERROR    | src.utils.playwright_wrapper | !!! Exception in function: execute_action - Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 17:14:45,803 | ERROR    | src.replay.executor  | Step 3 failed: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_role("link", name="Transact").first
+
+2026-09-14 17:14:45,806 | INFO     | src.replay.executor  | Known business outcome: 'record_not_found'
+2026-09-14 17:14:45,807 | INFO     | src.replay.executor  | No human intervention needed. Exiting gracefully.
+2026-09-14 17:14:45,997 | INFO     | src.replay.executor  | Screenshot saved to src/evidence/replay_failure_mock_bank_transaction_step_3_20260914_171445.png
+2026-09-14 17:14:46,177 | INFO     | __main__             | STRUCTURED RESULT:
+{
+  "status": "business_outcome",
+  "outcome": "record_not_found",
+  "step": 3,
+  "outputs": {}
+}
