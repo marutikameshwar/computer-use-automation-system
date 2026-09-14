@@ -25,8 +25,8 @@ Traditional UI automation scripts break easily when the UI changes, and pure LLM
 ### 2. Installation
 Clone the repository to your local machine:
 ```bash
-git clone <your-repo-url>
-cd "interface ai project"
+git clone https://github.com/marutikameshwar/computer-use-automation-system.git
+cd computer-use-automation-system
 ```
 
 Create and activate a Python virtual environment:
