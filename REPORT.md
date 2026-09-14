@@ -105,5 +105,21 @@ Given the time constraints, we made precise cuts to focus on the depth and relia
 1. **Operator UI Mocking**: We implemented the HITL handoff via a raw terminal interface rather than a full WebSocket-driven React operator console. The transfer-of-control mechanics are mathematically identical, but the terminal approach eliminated days of frontend scaffolding.
 2. **Self-Healing Discovery**: If the LLM hallucinates an invalid JSON block during the Discovery Phase, we currently log a `ValidationError` and fail. In a broader timeline, we would feed that error back into Claude in a `while` loop, forcing it to self-correct the JSON structure before saving the blueprint.
 
-**Next Steps**
-The immediate next step is building the **Agent-Facing Interface**. We envision wrapping the `orchestrator.py` module in a FastAPI endpoint. This would allow macroscopic AI agents to discover available automation capabilities dynamically via an OpenAPI spec, and trigger these lightning-fast, deterministic Replay blueprints remotely via HTTP requests.
+### 8. Next Steps & Future Scope
+
+To evolve this core automation engine into a massive, enterprise-scale production platform, several architectural and infrastructural upgrades are necessary. Our future scope focuses on distributing the workload, enhancing multi-agent orchestration, and solidifying the cloud infrastructure:
+
+1. **Microservice Architecture & Distributed Queues**
+   The current system runs as a monolithic Python script. For production, we will decouple the **Discovery Agent**, the **Classification Agent**, and the **Replay Engine** into highly available, independent microservices (e.g., using FastAPI and Docker). We will implement a message broker like RabbitMQ or Kafka to handle a massive distributed queue of incoming task requests. This allows the system to scale Replay Engine containers elastically during peak processing hours, executing thousands of automated legacy transactions in parallel across isolated Chromium instances.
+
+2. **LangChain & LangGraph Orchestration**
+   While the current orchestrator handles the handoff between LLM and deterministic replay flawlessly, orchestrating complex, multi-stage workflows across dozens of different applications requires a specialized framework. We plan to integrate **LangGraph** to model these complex execution states. By treating our saved `CapabilityArtifacts` as discrete LangChain "Tools", a macroscopic Supervisor Agent can dynamically string together multiple deterministic blueprints—for instance, pulling data from the Core Banking System (App A), analyzing it, and then executing a transaction in the Servicing Portal (App B)—all within a strictly defined, cyclical graph structure.
+
+3. **Real-time WebSocket Operator Console**
+   The terminal-based Human-in-the-Loop (HITL) seam mathematically proves our control-transfer model, but an enterprise setting requires a remote operator. We will build a dedicated React frontend connected via WebSockets. When a `hard_failure` is detected, the Replay Engine microservice will pause and stream the live Chromium session via WebRTC/VNC to the operator's browser. The operator can take control, resolve the popup or crash remotely, and click "Resume," seamlessly passing the baton back to the headless Replay Engine container.
+
+4. **Self-Healing LLM Retry Loops**
+   Currently, if the Discovery Agent hallucinates an invalid JSON structure, the system throws a `ValidationError` and fails the run. We will implement an automated self-healing loop. If the JSON fails Pydantic validation, the exact schema error will be fed back into Claude in a prompt (e.g., *"Your previous output failed validation: Missing field 'locator'. Please correct it."*). This forces the LLM to self-correct its output recursively until a mathematically perfect blueprint is generated.
+
+5. **Automated Code Generation for QA Suites**
+   While our JSON `CapabilityArtifacts` are consumed by our custom Python Replay Engine, an incredible future feature is **Automated Code Generation**. We will build a compiler that reads the `v1.json` blueprint and statically emits a raw, standalone Playwright test script (`.spec.ts`) or a Cypress test. This allows enterprise QA teams to use our AI Discovery Agent to autonomously write, generate, and maintain their traditional automated testing suites, expanding the product's market fit far beyond raw task execution.
