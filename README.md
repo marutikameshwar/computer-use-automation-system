@@ -101,8 +101,12 @@ python main.py --url "http://localhost:5000" --goal "Search for member 12345, na
 
 **Here is exactly how the system behaves, step-by-step:**
 
+> [!TIP]
+> **Want to watch the AI Discovery phase from scratch?**
+> The repository already comes with pre-recorded blueprints for the mock bank. To force the AI to learn the UI entirely from scratch, simply delete all `.json` files inside the `src/workflows/mock_bank_tx/` directory before running the orchestrator!
+
 ### 🟢 Run 1: The Initial Discovery Phase (Automatic Happy Path)
-When you run `python main.py` for the very first time, the system notices that it does not have a blueprint for this task yet.
+When you run `python main.py` for the very first time (or after deleting the blueprints), the system notices that it does not have a blueprint for this task yet.
 1. It automatically wakes up the **Discovery Agent** (powered by Claude).
 2. It automatically uses the built-in default goal prompt:
    > *"Search for member 12345, navigate to their dashboard, initiate a savings transaction of 500, reach the confirmation page, extract the full text of the paragraph that starts with 'Successfully processed' into a variable named 'transaction_receipt', and then immediately output an action of wait with a value of DONE."*
