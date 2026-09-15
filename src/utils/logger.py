@@ -18,6 +18,11 @@ def setup_logger(run_type: str) -> None:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = os.path.join(log_dir, f"{run_type}_run_{timestamp}.log")
     
+    # Remove existing handlers to allow switching log files mid-session
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+        handler.close()
+        
     # Configure root logger
     logging.basicConfig(
         level=logging.INFO, # Default to INFO for production

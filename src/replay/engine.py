@@ -132,7 +132,61 @@ class ReplayEngine:
                     continue
                 
                 logger.error("Checking expected_outcomes... %d outcomes registered. No match.", len(self.artifact.expected_outcomes))
-                self._escalate_unknown(idx + 1, str(e))
+                new_outcome = self._escalate_unknown(idx + 1, str(e))
+                if new_outcome:
+                    severity, name, rec_action = new_outcome
+                    if severity == "business_outcome":
+                        logger.info("New business outcome registered: '%s'", name)
+                        logger.info("No human intervention needed. Exiting gracefully.")
+                        self.controller.close()
+                        return {
+                            "status": "business_outcome",
+                            "outcome": name,
+                            "step": idx + 1,
+                            "outputs": extracted_data
+                        }
+                    elif severity == "hard_failure":
+                        logger.error("New hard failure registered: '%s'", name)
+                        # Create a dummy outcome object to pass to _escalate_known_failure
+                        class DummyOutcome:
+                            def __init__(self, n): self.name = n
+                        aborted = self._escalate_known_failure(idx + 1, DummyOutcome(name))
+                        if aborted:
+                            self.controller.close()
+                            return {
+                                "status": "hard_failure_aborted",
+                                "outcome": name,
+                                "step": idx + 1,
+                                "outputs": extracted_data
+                            }
+                        else:
+                            logger.info("Operator resolved the issue. Retrying the failed step...")
+                            handled = True
+                    elif severity == "recoverable_condition" and rec_action:
+                        logger.warning("New recoverable condition registered: '%s'", name)
+                        logger.info("Executing autonomous recovery action: %s...", rec_action.get("action"))
+                        
+                        loc = rec_action.get("locator") or {}
+                        r_strat = loc.get("strategy")
+                        r_val = loc.get("value")
+                        r_name = loc.get("name")
+                        
+                        self.controller.execute_action(
+                            action=rec_action.get("action"),
+                            locator_strategy=r_strat,
+                            locator_value=r_val,
+                            locator_name=r_name,
+                            input_value=rec_action.get("value")
+                        )
+                        
+                        retry_counts[idx] = retry_counts.get(idx, 0) + 1
+                        logger.info("Recovery complete. Retrying Step %d (Attempt %d)...", idx+1, retry_counts[idx])
+                        time.sleep(self.config["recovery_delay_seconds"])
+                        handled = True
+
+                if handled:
+                    continue
+
                 self.controller.close()
                 return {
                     "status": "escalated",
@@ -225,8 +279,10 @@ class ReplayEngine:
                 recognizer_text=recognizer_text,
                 recovery_action=recovery_action
             )
+            return (severity, error_name, recovery_action)
         else:
             logger.error("Insufficient input. No new version created.")
+            return None
 
     def _take_screenshot(self, step_index: int):
         screenshot_path = generate_screenshot_path(f"replay_failure_{self.artifact.name}_step_{step_index}")
