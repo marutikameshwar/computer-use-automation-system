@@ -58,6 +58,15 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 You can optionally tweak execution parameters like token limits, delays, and maximum steps in `config.yaml`.
 
+## ⚙️ Configuration (`config.yaml`)
+You can fine-tune the system's behavior by editing the `config.yaml` file in the root directory. The following key parameters are fully configurable:
+- **`safety.allowed_domains`**: A strict list of URLs the AI is permitted to navigate to.
+- **`safety.allowed_actions`**: The strict list of Playwright actions allowed (e.g., `click`, `type`, `navigate`).
+- **`safety.risky_keywords`**: Words that trigger the terminal pause/approval guardrail (e.g., `submit`, `pay`, `transact`).
+- **`tuning.max_retries`**: The number of times the replay engine will retry a failed locator before timing out (Default: 3).
+- **`tuning.step_delay_seconds`**: The delay between successful steps to allow legacy UIs to react.
+- **`ai_settings.model_name`**: The specific Anthropic Claude model to use for Discovery and Classification.
+
 ---
 
 ## 🧪 Running the Test Suite
@@ -115,22 +124,28 @@ From here, you can seamlessly enter different numbers to test various edge case 
 - **What happens:** 
   1. The **Replay Engine** blindly attempts to execute the `v1.json` blueprint (searching for the dashboard).
   2. The mock bank returns a "Record not found" error on the screen.
-  3. The Replay Engine times out looking for the Transact button. It realizes the UI is stuck, so it escalates the failure to the **Classification Agent**.
+  3. The Replay Engine times out looking for the Transact button *(Note: The engine will retry for a few seconds before timing out, so please wait!)*. It realizes the UI is stuck, so it escalates the failure to the **Classification Agent**.
   4. The Classification Agent analyzes the screen and categorizes this as a legitimate business error (a known application state), *not* a system bug.
   5. **Human Approval Prompt:** The terminal will pause and ask you to confirm this diagnosis: `Accept this AI classification? (y/n)`. 
   6. Type **y** and press **Enter**.
 - **The Result:** Only after your approval, the system deep-copies the blueprint into `v2.json`, officially cataloging `record_not_found` as an expected `business_outcome`. 
-- **Input (Second attempt):** Type `999` again.
-- **What happens:** The system instantly matches the UI state to the `record_not_found` outcome in `v2.json` and gracefully exits *without* calling the LLM!
+
+#### 🔁 Replay Scenario A (Input: `999` again)
+- **What happens:** The Replay Engine loads `v2.json`. The mock bank returns "Record not found". The engine instantly matches the UI state to the `record_not_found` outcome embedded in the blueprint.
+- **The Result:** The system gracefully exits **without calling the LLM or timing out**. It proves that the AI's intelligence has been successfully converted into deterministic, lightning-fast code.
 
 #### 🟠 Scenario B: Recoverable UI Change (Input: `888`)
-- **Input:** Type `888` and press Enter.
+- **Input (First attempt):** Type `888` and press Enter.
 - **What happens:** 
   1. A new, unexpected "Terms of Service" popup blocks the dashboard.
-  2. The engine times out trying to click "Transact" because the popup is in the way. It escalates to the AI.
+  2. The engine times out trying to click "Transact" because the popup is in the way *(Note: The engine will retry for a few seconds before timing out, so please wait!)*. It escalates to the AI.
   3. The Classification Agent identifies this as a `recoverable_condition` and instructs the engine to click "Acknowledge & Close".
   4. **Human Approval Prompt:** The terminal asks: `Accept this AI classification? (y/n)`. Type **y** and press **Enter**.
-- **The Result:** The engine clicks the popup away, seamlessly resumes the original automation, hits the **Transact** button (prompting you for safety permission if configured), and successfully completes the transaction!
+- **The Result:** The engine clicks the popup away, seamlessly resumes the original automation, hits the **Transact** button (prompting you for safety permission if configured), and successfully completes the transaction! The recovery logic is saved to `v2.json`.
+
+#### 🔁 Replay Scenario B (Input: `888` again)
+- **What happens:** The engine encounters the popup again.
+- **The Result:** Because the exact steps to clear the popup are now embedded in `v2.json`, the Replay Engine instantly clears the popup deterministically. **Zero timeouts, zero AI calls.**
 
 #### 🔴 Scenario C: Hard System Failure & Human Handoff (Input: `500`)
 - **Input (First attempt):** Type `500` and press Enter.
@@ -139,11 +154,10 @@ From here, you can seamlessly enter different numbers to test various edge case 
   2. The engine escalates to the AI, which correctly identifies this as a catastrophic `hard_failure` (System Crash). 
   3. **Human Approval Prompt:** The terminal asks: `Accept this AI classification? (y/n)`. Type **y** and press **Enter**.
   4. The system generates `v3.json`, logging this as a known critical failure.
-- **Input (Second attempt):** Without restarting the script, type `500` at the prompt again. 
-- **What happens:** 
-  1. The engine hits the crash, but this time recognizes it immediately as a *known hard failure* from `v3.json`. 
-  2. **Human-in-the-Loop:** It pauses execution and asks you via the terminal to manually fix the browser state!
-- **The Recovery:** Go to the Chromium browser window that opened, click the **"Resolve System Error"** button to bypass the crash, return to your terminal, and press **Enter**. The deterministic engine will seamlessly resume execution right where it left off and successfully complete the automation!
+
+#### 🔁 Replay Scenario C (Input: `500` again)
+- **What happens:** The engine hits the crash, but this time recognizes it immediately as a *known hard failure* from `v3.json`. 
+- **The Result:** **Human-in-the-Loop:** It pauses execution and asks you via the terminal to manually fix the browser state! Go to the Chromium browser window that opened, click the **"Resolve System Error"** button to bypass the crash, return to your terminal, and press **Enter**. The deterministic engine will seamlessly resume execution right where it left off and successfully complete the automation!
 
 ---
 
