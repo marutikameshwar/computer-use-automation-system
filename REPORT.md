@@ -20,7 +20,14 @@ When the Orchestrator encounters a completely new goal, it instantiates the **Di
 In production, the LLM is completely severed from the loop. The Orchestrator wakes up the **Replay Engine**. 
 1. The engine reads the `v1.json` blueprint.
 2. It executes the steps strictly and directly using Playwright. 
-3. **The Result**: We achieve 100% deterministic execution in under 3 seconds per run, with zero token costs and zero hallucination risk. We built a system that gets the best of both worlds: AI-driven adaptability on day one, and enterprise-grade reliability on day two.
+**C. The Self-Healing Seam & Human Feedback Loop**
+The architecture anticipates that legacy UIs will occasionally break or throw runtime errors. When the Replay Engine fails to locate an element or complete a step:
+1. It immediately pauses execution and captures a screenshot of the failure.
+2. It escalates to a secondary LLM (the **Classification Agent**) to strictly segregate the error into one of three buckets: a legitimate **Business Error** (e.g., Account Not Found), a **Recoverable UI Block** (e.g., a popup ad), or a catastrophic **Hard Stop** (e.g., a 500 server crash).
+3. If it is a **Hard Stop** (or a brand new, uncatalogued error), the architecture demands explicit **Human-in-the-Loop (HITL) Feedback**. The system halts, forces a human operator to bypass the crash in the live browser session, and records their exact feedback and resolution steps. 
+4. This human feedback is instantly encoded into a new `.json` blueprint version, permanently patching the system against that specific failure.
+
+**The Result**: We achieve 100% deterministic execution in under 3 seconds per run, with zero token costs and zero hallucination risk—backed by an autonomous self-healing seam that safely escalates to human operators only when absolutely necessary.
 
 ---
 
